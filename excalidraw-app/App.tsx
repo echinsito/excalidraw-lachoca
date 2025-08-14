@@ -365,6 +365,7 @@ const ExcalidrawWrapper = () => {
 
   const [excalidrawAPI, excalidrawRefCallback] =
     useCallbackRefState<ExcalidrawImperativeAPI>();
+  // const [gridModeEnabled, setGridModeEnabled] = useState(true);
 
   const [, setShareDialogState] = useAtom(shareDialogStateAtom);
   const [collabAPI] = useAtom(collabAPIAtom);
@@ -404,7 +405,7 @@ const ExcalidrawWrapper = () => {
 
     const loadImages = (
       data: ResolutionType<typeof initializeScene>,
-      isInitialLoad = false,
+      isInitialLoad = true,
     ) => {
       if (!data.scene) {
         return;
@@ -797,6 +798,16 @@ const ExcalidrawWrapper = () => {
     },
   };
 
+
+ // 1. Estado local para controlar si el modo cuadrícula está activado
+  const [gridModeEnabled, setGridModeEnabled] = useState(false);
+
+  // 2. Estado para manejar el appState de Excalidraw.
+  //    Inicialmente vacío, lo actualizaremos para cambiar el gridSize.
+
+  // Función para alternar el modo cuadrícula
+
+
   return (
     <div
       style={{ height: "100%" }}
@@ -805,12 +816,14 @@ const ExcalidrawWrapper = () => {
       })}
     >
       <Excalidraw
-        excalidrawAPI={excalidrawRefCallback}
+
+        excalidrawAPI={excalidrawRefCallback} 
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}
         isCollaborating={isCollaborating}
         onPointerUpdate={collabAPI?.onPointerUpdate}
         UIOptions={{
+          
           canvasActions: {
             toggleTheme: true,
             export: {
@@ -843,6 +856,7 @@ const ExcalidrawWrapper = () => {
           },
         }}
         langCode={langCode}
+
         renderCustomStats={renderCustomStats}
         detectScroll={false}
         handleKeyboardGlobally={true}
@@ -853,6 +867,39 @@ const ExcalidrawWrapper = () => {
             return null;
           }
           return (
+             <div
+            className="flex items-center p-2 bg-white rounded-lg shadow-md"
+            style={{
+              // Estilos adicionales si Tailwind no está configurado o para overrides
+              display: "flex",
+              alignItems: "center",
+              padding: "8px",
+              backgroundColor: "white",
+              borderRadius: "8px",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            }}
+          >
+            <label
+              className="flex items-center cursor-pointer select-none text-gray-700"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                userSelect: "none",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={gridModeEnabled}
+              onChange={() => {
+                setGridModeEnabled(!gridModeEnabled);
+                console.log('hola');
+              }}
+                className="mr-2 h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                style={{ marginRight: "8px" }}
+              />
+              Modo Cuadrícula
+            </label>
             <div className="top-right-ui">
               {collabError.message && <CollabError collabError={collabError} />}
               <LiveCollaborationTrigger
@@ -862,6 +909,8 @@ const ExcalidrawWrapper = () => {
                 }
               />
             </div>
+          </div>
+
           );
         }}
         onLinkOpen={(element, event) => {
@@ -871,6 +920,7 @@ const ExcalidrawWrapper = () => {
           }
         }}
       >
+        
         <AppMainMenu
           onCollabDialogOpen={onCollabDialogOpen}
           isCollaborating={isCollaborating}
@@ -879,10 +929,12 @@ const ExcalidrawWrapper = () => {
           setTheme={(theme) => setAppTheme(theme)}
           refresh={() => forceRefresh((prev) => !prev)}
         />
+       
         <AppWelcomeScreen
           onCollabDialogOpen={onCollabDialogOpen}
           isCollabEnabled={!isCollabDisabled}
         />
+        
         <OverwriteConfirmDialog>
           <OverwriteConfirmDialog.Actions.ExportToImage />
           <OverwriteConfirmDialog.Actions.SaveToDisk />
@@ -1010,7 +1062,7 @@ const ExcalidrawWrapper = () => {
               },
             },
             {
-              label: "GitHub",
+              label: "GitwwwHub",
               icon: GithubIcon,
               category: DEFAULT_CATEGORIES.links,
               predicate: true,
@@ -1084,6 +1136,7 @@ const ExcalidrawWrapper = () => {
                 );
               },
             },
+            
             ...(isExcalidrawPlusSignedUser
               ? [
                   {
@@ -1142,6 +1195,7 @@ const ExcalidrawWrapper = () => {
             ref={debugCanvasRef}
           />
         )}
+        
       </Excalidraw>
     </div>
   );
@@ -1151,13 +1205,19 @@ const ExcalidrawApp = () => {
   const isCloudExportWindow =
     window.location.pathname === "/excalidraw-plus-export";
   if (isCloudExportWindow) {
-    return <ExcalidrawPlusIframeExport />;
+    return <ExcalidrawWrapper/>;
   }
-
   return (
     <TopErrorBoundary>
       <Provider store={appJotaiStore}>
-        <ExcalidrawWrapper />
+  
+        <div style={{ height: "100vh", width: "100vw" }}>
+          
+          <ExcalidrawWrapper
+          
+          
+           />
+        </div>
       </Provider>
     </TopErrorBoundary>
   );

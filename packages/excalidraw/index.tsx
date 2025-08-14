@@ -32,7 +32,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     langCode = defaultLang.code,
     viewModeEnabled,
     zenModeEnabled,
-    gridModeEnabled,
+    gridModeEnabled = true,
     libraryReturnUrl,
     theme,
     name,
@@ -213,7 +213,7 @@ const areEqual = (prevProps: ExcalidrawProps, nextProps: ExcalidrawProps) => {
 };
 
 export const Excalidraw = React.memo(ExcalidrawBase, areEqual);
-Excalidraw.displayName = "Excalidraw";
+Excalidraw.displayName = "Pizarron - Oficina de La Choca";
 
 export {
   getSceneVersion,
